@@ -1,0 +1,28 @@
+峻爸 AI Transcriber v3.3｜Validation Report
+
+本次針對「不同電腦自適應、35% 長時間不動、音檔相容性、錄音/字幕核對」重製。
+
+程式碼驗證：
+- Python compileall：PASS
+- pytest：33 passed, 1 skipped
+- 音檔快速/完整解碼預檢：PASS（實際建立中文檔名 WAV 並用 FFmpeg 解碼）
+- Word 匯出後重新開啟：PASS
+- SRT / VTT 匯出：PASS
+- HTML 錄音核對播放器：PASS（包含點文字跳到音訊時間的 Javascript 與本機音檔 URI）
+- 舊款 Intel Iris Xe/UHD 辨識 heuristic：PASS
+- 自動切段策略：PASS
+- 硬體 RTF 學習資料寫入：PASS
+
+v3.3 新增/調整：
+1. 預設「最佳化（推薦）」；有 Gemini Key 自動混合，無 Key 自動完全離線。
+2. 最佳化 + 切割 0 分鐘 = 自動切段；長錄音不再預設整支一次推論。
+3. 舊款 Intel Iris Xe/UHD 初次自適應優先 CPU INT8，模型 small/medium；Intel Arc / CUDA 維持較高效能路線。
+4. 每台電腦獨立累積實測 RTF（耗時/音訊秒數），後續自適應依真實速度調整。
+5. 音檔開始前做 FFmpeg 相容檢查；異常容器/編碼自動轉 16kHz mono PCM WAV。
+6. 預設建立 HTML + VTT 錄音核對播放器；點逐字稿可跳時間，播放時會反白段落。
+7. 混合模式 Word 同時保留 Gemini 整理稿與時間軸逐字稿。
+
+限制/需 Windows 實機驗證：
+- GitHub hosted runner 沒有使用者實際 Intel/NVIDIA/AMD GPU/NPU，因此硬體速度與驅動相容性仍需目標電腦實測。
+- OpenVINO GenAI 部分裝置無法提供 token-level 百分比，v3.3 以較短自動切段 + 心跳監看降低「像卡住」的不確定性。
+- OneDrive 雲端佔位檔若未下載到本機，程式會嘗試讀取/轉換；若 Windows 尚未 hydrate，請先設為「永遠保留在此裝置」。
